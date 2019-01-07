@@ -89,6 +89,8 @@ def deleteStudent(request):
     return render(request, 'ciscoapp/view_students.html', {'st_lst': st_lst})
 
 
+
+
 def updateStudentHtml(request):
     return render(request, 'ciscoapp/update_student.html')
 
