@@ -160,7 +160,13 @@ def dashboardS(request):
     query_result1 = points.objects.filter(
         login__user__email=str(request.user.email))
     pointsObject = query_result1[0]
-    return render(request, 'ciscoapp/dashboardS.html', {'pointsObject': pointsObject})
+    query = "select * from point order by points DESC"
+    print(query)
+    query_result5 = points.objects.raw(query)
+    print(query_result5)
+    #return render(request, 'ciscoapp/dashboardS.html', {'query_results': query_results})
+    return render(request, 'ciscoapp/dashboardS.html', {'query_results': query_result5, 'pointsObject': pointsObject})
+    #desc return render(request, 'ciscoapp/dashboardS.html', {'pointsObject': pointsObject})
 
 def dashboardT(request):
     return render(request, 'ciscoapp/dashboardT.html') 
@@ -284,31 +290,84 @@ def deletequestion(request):
 
 def questionoftheweekstudent(request):
 	#query = "select * from question where qotw ='y'"
-    query = "select * from question where qotw = " + "'" + \
-        str('y') + "'"
+    query = "select * from qotw " 
+    print(query)
+    question234 = question.objects.raw(query)
+    return render(request, 'ciscoapp/QuestionoftheweekS.html', {'questionList': question234})
+
+def qotwstudent(request):
+    studans = request.POST['studans']
+    query = "select * from  qotw  "
     print(query)
     questions = question.objects.raw(query)
-    return render(request, 'ciscoapp/QuestionoftheweekS.html', {'questionList': questions})
-
+    return render(request, 'ciscoapp/qotwsubmit.html', {'questionList': questions, 'studans': studans})
 
 def questionoftheweekteacher(request):
     question11 = request.POST['question111']
     subject43 = request.session['subject23']
     chapter43 = request.session['chapter23']
     print(question11)
-    query = "update question set  qotw = " + "'" + \
-        str('y') + "'" + " where question = " + \
-        "'" + str(question11) + "'" + "and subject = " + "'" + str(subject43) + \
-        "'" + " and chapter = " + "'" + str(chapter43) + "'"
+
+    request.session['question112'] = question11
+    request.session['subject112'] = subject43
+    request.session['chapter112'] = chapter43
+    #query = "update question set  qotw = " + "'" + \
+        #str('y') + "'" + " where question = " + \
+       # "'" + str(question11) + "'" + "and subject = " + "'" + str(subject43) + \
+        #"'" + " and chapter = " + "'" + str(chapter43) + "'"
+    #cursor = connection.cursor()
+    #cursor.execute(query)
+    query = "select * from question where question = " + "'" + \
+        str(question11) + "'" + "and subject =" + "'" + str(subject43) + "'" + "and chapter =" + "'" + str(chapter43) + "'"
+    print(query)
+    questions = question.objects.raw(query)
+    return render(request, 'ciscoapp/qotw.html', {'question1123': questions})
+    print(question1123)
+
+
+def qotw(request):
+    question112 = request.session['question112']
+    subject113 = request.session['subject112']
+    chapter113 = request.session['chapter112']
+    opt1 = request.POST['option1']
+    opt2 = request.POST['option2']
+    opt3 = request.POST['option3']
+    opt4 = request.POST['option4']
+    ans = request.POST['ans']
+    print(question112)
+    print(opt1)
+    print(opt2)
+    query123= "delete from qotw"
+    print(query123)
+    query = "insert into qotw VALUES " + "(" + "'" + str(subject113) + "'" + "," + "'" + str(chapter113) + "'" + "," + \
+     "'" + str(question112) + "'" + "," + "'" + str(opt1) + "'" + "," + "'" + str(opt2) + "'" + "," + "'" + str(opt3) + \
+        "'" + "," + "'" + str(opt4) + "'" + "," + "'" + str(ans) + "'" + ")"
+    print(query)
     cursor = connection.cursor()
+    cursor.execute(query123)
     cursor.execute(query)
-    return render(request, 'ciscoapp/Deletequestion.html')
+
+    return render(request, 'ciscoapp/qotw.html')
 
 
+def rightans(request):
+    query_result1 = points.objects.filter(
+        login__user__email=str(request.user.email))
+    pointsObject = query_result1[0]
+    pointsObject.points += 1
+    pointsObject.save()
+    return render(request, 'ciscoapp/qotwsubmit1.html')
 
+
+def wrongans(request):
+    query_result1 = points.objects.filter(
+        login__user__email=str(request.user.email))
+    pointsObject = query_result1[0]
+    pointsObject.points += 0
+    pointsObject.save()
+    return render(request, 'ciscoapp/qotwsubmit1.html')
 def QuestionOfTheWeekS(request):
-    query = "select * from question where qotw = " + "'" + \
-        str('y') + "'"
+    query = "select * from  qotw  "
     print(query)
     questions = question.objects.raw(query)
     return render(request, 'ciscoapp/QuestionoftheweekS.html', {'questionList': questions})
